@@ -61,6 +61,8 @@ export default function BookingForm() {
     setSubmitting(true)
     setSubmitError(false)
 
+    if (!supabase) { setSubmitError(true); setSubmitting(false); return }
+
     const { error } = await supabase.from('bookings').insert([{
       name:      form.name,
       business:  form.business,
