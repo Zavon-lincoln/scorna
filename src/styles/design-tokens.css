@@ -1,0 +1,45 @@
+/* ───────────────────────────────────────────────────────────────────
+   Scorna Design System — "Smoke & Glass"
+   Dark luxury neubrutalism. Tokens only — no component rules here.
+   ─────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Palette */
+  --void: #0a0a0a; /* Page background */
+  --obsidian: #1c1c1c; /* Card / surface background */
+  --bone: #f0ede6; /* Primary text, headings */
+  --ash: #666666; /* Secondary text, subtext */
+  --dried-blood: #8b1a1a; /* Hover borders, depth accents */
+  --ember: #7b0d0d; /* Primary accent — sparingly */
+
+  /* Status colors (derived from the pill spec) */
+  --status-blue: #6b9bd2;
+  --status-gold: #b5954a;
+  --status-green: #4a7c59;
+  --status-red: #cc4444;
+
+  /* Typography */
+  --font-display: 'Poiret One', sans-serif;
+  --font-editorial: 'Cormorant Garamond', serif;
+  --font-ui: 'Space Grotesk', sans-serif;
+
+  /* Borders & radii */
+  --border-subtle: rgba(240, 237, 230, 0.07);
+  --border-soft: rgba(240, 237, 230, 0.1);
+  --border-mid: rgba(240, 237, 230, 0.14);
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+
+  /* Layout */
+  --sidebar-width: 220px;
+  --sidebar-width-collapsed: 64px;
+  --topbar-height: 56px;
+
+  /* Elevation */
+  --shadow-panel: 0 24px 60px rgba(0, 0, 0, 0.55);
+  --shadow-modal: 0 30px 80px rgba(0, 0, 0, 0.6);
+
+  /* Motion */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}

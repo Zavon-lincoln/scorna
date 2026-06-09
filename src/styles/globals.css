@@ -1,0 +1,435 @@
+/* ───────────────────────────────────────────────────────────────────
+   Globals — reset, base elements, atmosphere, and the shared
+   "Smoke & Glass" component primitives (glass, buttons, pills, fields).
+   ─────────────────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--void);
+  color: var(--bone);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(240, 237, 230, 0.08);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(240, 237, 230, 0.16);
+}
+
+/* ── Atmosphere ──────────────────────────────────────────────────── */
+
+.grid-surface {
+  background-image: linear-gradient(
+      rgba(240, 237, 230, 0.022) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(240, 237, 230, 0.022) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+.ember-orb-tl {
+  position: fixed;
+  top: -150px;
+  left: -100px;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(
+    circle,
+    rgba(123, 13, 13, 0.11) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ember-orb-br {
+  position: fixed;
+  bottom: -150px;
+  right: -100px;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(
+    circle,
+    rgba(123, 13, 13, 0.09) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Glass ───────────────────────────────────────────────────────── */
+
+.glass {
+  background: rgba(18, 18, 18, 0.6);
+  backdrop-filter: blur(16px) saturate(1.3);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  border: 1px solid rgba(240, 237, 230, 0.07);
+  border-radius: 10px;
+  position: relative;
+}
+
+.glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(240, 237, 230, 0.11),
+    transparent
+  );
+  border-radius: 10px 10px 0 0;
+  pointer-events: none;
+}
+
+/* ── Wordmark ────────────────────────────────────────────────────── */
+
+.wordmark {
+  font-family: var(--font-display);
+  letter-spacing: 0.12em;
+  color: var(--bone);
+}
+.wordmark em {
+  color: var(--ember) !important;
+  font-style: normal;
+}
+
+/* ── Typography utilities ────────────────────────────────────────── */
+
+.editorial {
+  font-family: var(--font-editorial);
+}
+.display {
+  font-family: var(--font-display);
+}
+.text-ash {
+  color: var(--ash);
+}
+.text-bone {
+  color: var(--bone);
+}
+
+.section-title {
+  font-family: var(--font-editorial);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--bone);
+}
+
+.eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid rgba(240, 237, 230, 0.14);
+  background: transparent;
+  color: var(--bone);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, opacity 0.2s;
+}
+.btn:hover {
+  border-color: var(--ember);
+  background: rgba(123, 13, 13, 0.06);
+}
+.btn:focus-visible {
+  outline: 2px solid var(--dried-blood);
+  outline-offset: 2px;
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.btn-primary {
+  background: rgba(123, 13, 13, 0.15);
+  border-color: var(--ember);
+}
+.btn-primary:hover {
+  background: rgba(123, 13, 13, 0.25);
+}
+.btn-danger {
+  border-color: rgba(139, 26, 26, 0.4);
+  color: #cc4444;
+}
+.btn-danger:hover {
+  border-color: #cc4444;
+  background: rgba(204, 68, 68, 0.06);
+}
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 10px;
+}
+.btn-icon {
+  padding: 8px;
+  gap: 0;
+}
+
+/* ── Status pills ────────────────────────────────────────────────── */
+
+.pill {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 4px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+.pill-new {
+  color: var(--bone);
+  border-color: rgba(240, 237, 230, 0.18);
+  background: rgba(240, 237, 230, 0.04);
+}
+.pill-contacted {
+  color: #6b9bd2;
+  border-color: rgba(107, 155, 210, 0.28);
+  background: rgba(107, 155, 210, 0.05);
+}
+.pill-qualified {
+  color: #b5954a;
+  border-color: rgba(181, 149, 74, 0.28);
+  background: rgba(181, 149, 74, 0.05);
+}
+.pill-closed {
+  color: #4a7c59;
+  border-color: rgba(74, 124, 89, 0.3);
+  background: rgba(74, 124, 89, 0.06);
+}
+.pill-lost {
+  color: var(--ash);
+  border-color: rgba(102, 102, 102, 0.2);
+  background: rgba(102, 102, 102, 0.05);
+}
+.pill-published {
+  color: #4a7c59;
+  border-color: rgba(74, 124, 89, 0.3);
+  background: rgba(74, 124, 89, 0.06);
+}
+.pill-scheduled {
+  color: #b5954a;
+  border-color: rgba(181, 149, 74, 0.28);
+  background: rgba(181, 149, 74, 0.05);
+}
+.pill-draft {
+  color: var(--ash);
+  border-color: rgba(102, 102, 102, 0.2);
+  background: rgba(102, 102, 102, 0.05);
+}
+.pill-approved {
+  color: var(--bone);
+  border-color: rgba(240, 237, 230, 0.18);
+  background: rgba(240, 237, 230, 0.04);
+}
+.pill-active {
+  color: #4a7c59;
+  border-color: rgba(74, 124, 89, 0.35);
+  background: rgba(74, 124, 89, 0.07);
+}
+.pill-off {
+  color: var(--ash);
+  border-color: rgba(102, 102, 102, 0.2);
+  background: rgba(102, 102, 102, 0.05);
+}
+.pill-confirmed {
+  color: #4a7c59;
+  border-color: rgba(74, 124, 89, 0.35);
+  background: rgba(74, 124, 89, 0.07);
+}
+.pill-cancelled {
+  color: var(--ash);
+  border-color: rgba(102, 102, 102, 0.2);
+  background: rgba(102, 102, 102, 0.05);
+}
+.pill-pending {
+  color: #b5954a;
+  border-color: rgba(181, 149, 74, 0.28);
+  background: rgba(181, 149, 74, 0.05);
+}
+.pill-admin {
+  color: var(--ember);
+  border-color: rgba(123, 13, 13, 0.5);
+  background: rgba(123, 13, 13, 0.1);
+}
+.pill-client {
+  color: #6b9bd2;
+  border-color: rgba(107, 155, 210, 0.28);
+  background: rgba(107, 155, 210, 0.05);
+}
+
+/* ── Form fields ─────────────────────────────────────────────────── */
+
+.field-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ash);
+  margin-bottom: 6px;
+}
+.field-label .req {
+  color: var(--ember);
+  margin-left: 2px;
+}
+.field-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(28, 28, 28, 0.8);
+  border: 1px solid rgba(240, 237, 230, 0.1);
+  border-radius: 6px;
+  color: var(--bone);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.field-input:focus {
+  border-color: var(--ember);
+}
+.field-input::placeholder {
+  color: var(--ash);
+  opacity: 0.5;
+}
+.field-input.error {
+  border-color: var(--dried-blood);
+}
+select.field-input option {
+  background: var(--obsidian);
+  color: var(--bone);
+}
+textarea.field-input {
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.5;
+}
+.field-error {
+  margin-top: 5px;
+  font-size: 11px;
+  color: var(--status-red);
+}
+.field-help {
+  margin-top: 5px;
+  font-size: 11px;
+  color: var(--ash);
+}
+
+/* ── Generic helpers ─────────────────────────────────────────────── */
+
+.row {
+  display: flex;
+  align-items: center;
+}
+.spread {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.gap-sm {
+  gap: 8px;
+}
+.gap-md {
+  gap: 16px;
+}
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+.muted {
+  color: var(--ash);
+}
+.divider {
+  height: 1px;
+  background: var(--border-subtle);
+  border: none;
+  margin: 0;
+}
+.spin {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
