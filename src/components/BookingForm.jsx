@@ -64,16 +64,16 @@ export default function BookingForm() {
     if (!supabase) { setSubmitError(true); setSubmitting(false); return }
 
     const { error } = await supabase.from('bookings').insert([{
-      name:      form.name,
-      business:  form.business,
-      type:      form.type,
-      email:     form.email,
-      phone:     form.phone,
-      spend:     form.spend,
-      challenge: form.challenge,
-      call_time: form.callTime,
-      status:    'New',
-      notes:     '',
+      full_name:        form.name,
+      business_name:    form.business,
+      business_type:    form.type,
+      email:            form.email,
+      phone:            form.phone,
+      marketing_spend:  form.spend,
+      biggest_challenge: form.challenge,
+      preferred_time:   form.callTime,
+      status:           'New',
+      notes:            '',
     }])
 
     setSubmitting(false)

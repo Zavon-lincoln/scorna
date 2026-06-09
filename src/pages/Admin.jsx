@@ -5,9 +5,9 @@ import StatsPanel from '../components/StatsPanel'
 function exportCSV(bookings) {
   const headers = ['Name','Business','Vertical','Email','Phone','Spend','Challenge','Preferred Time','Submitted','Status','Notes']
   const rows = bookings.map(b => [
-    b.name, b.business, b.type, b.email, b.phone,
-    b.spend, (b.challenge || '').replace(/\n/g,' '),
-    b.call_time, b.submitted_at, b.status, b.notes,
+    b.full_name, b.business_name, b.business_type, b.email, b.phone,
+    b.marketing_spend, (b.biggest_challenge || '').replace(/\n/g,' '),
+    b.preferred_time, b.created_at, b.status, b.notes,
   ].map(v => `"${(v||'').replace(/"/g,'""')}"`).join(','))
   const csv = [headers.join(','), ...rows].join('\n')
   const blob = new Blob([csv], { type: 'text/csv' })

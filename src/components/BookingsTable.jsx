@@ -69,14 +69,14 @@ export default function BookingsTable({ bookings, onUpdate, token }) {
               onMouseLeave={() => setHoveredRow(null)}
               style={{ background: hoveredRow === i ? 'var(--obsidian)' : 'var(--void)', transition: 'background 0.15s ease' }}
             >
-              <td style={cellStyle}>{b.name}</td>
-              <td style={cellStyle}>{b.business}</td>
-              <td style={cellStyle}>{b.type || '—'}</td>
+              <td style={cellStyle}>{b.full_name}</td>
+              <td style={cellStyle}>{b.business_name}</td>
+              <td style={cellStyle}>{b.business_type || '—'}</td>
               <td style={cellStyle}><a href={`mailto:${b.email}`} style={{ color: 'var(--ash)' }}>{b.email}</a></td>
               <td style={cellStyle}>{b.phone}</td>
-              <td style={cellStyle}>{b.spend || '—'}</td>
-              <td style={cellStyle}>{b.call_time || '—'}</td>
-              <td style={cellStyle}>{new Date(b.submitted_at).toLocaleDateString()}</td>
+              <td style={cellStyle}>{b.marketing_spend || '—'}</td>
+              <td style={cellStyle}>{b.preferred_time || '—'}</td>
+              <td style={cellStyle}>{new Date(b.created_at).toLocaleDateString()}</td>
               <td style={cellStyle}>
                 <select
                   value={b.status}
