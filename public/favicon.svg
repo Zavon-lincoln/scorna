@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Poiret+One');</style>
+  </defs>
+  <rect width="32" height="32" fill="#0A0A0A"/>
+  <text
+    x="16"
+    y="25"
+    font-family="'Poiret One', 'Didot', 'Bodoni MT', serif"
+    font-size="27"
+    font-weight="400"
+    fill="#C41A1A"
+    text-anchor="middle"
+  >S</text>
+</svg>
