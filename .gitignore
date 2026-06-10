@@ -26,3 +26,6 @@ dist-ssr
 *.sw?
 
 .vercel
+
+# Local seed scripts (contain credentials)
+scripts/seed-admin.js
