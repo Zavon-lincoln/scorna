@@ -33,7 +33,7 @@ function FullPageLoader() {
 /** Authenticated dashboard shell. */
 function Dashboard({ auth }) {
   const { user, role, clientId, clientName, signOut } = auth
-  const [page, setPage] = useState('overview')
+  const [page, setPage] = useState(() => role === 'admin' ? 'admin' : 'overview')
   const [openLeadId, setOpenLeadId] = useState(null)
   const [collapsed, setCollapsed] = useState(false)
 

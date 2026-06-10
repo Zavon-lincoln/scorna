@@ -142,6 +142,20 @@ export default function Overview({ clientId, onOpenLead, onNavigate }) {
     )
   }
 
+  if (!data) {
+    return (
+      <div className="page-inner">
+        <EmptyState
+          icon={Users}
+          title="No client linked"
+          message="Your account is not linked to a client. Open the Admin panel to manage clients and users."
+          actionLabel="Go to Admin"
+          onAction={() => onNavigate('admin')}
+        />
+      </div>
+    )
+  }
+
   const stats = [
     {
       label: 'Active Leads',
