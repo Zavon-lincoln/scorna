@@ -36,7 +36,7 @@ const HOUR_PX = 96 // two 48px slots per hour
 const EMPTY_FORM = {
   client_name: '',
   service: '',
-  staff_id: '',
+  staff_member: '',
   date: '',
   start: '09:00',
   end: '10:00',
@@ -129,12 +129,12 @@ export default function Schedule({ clientId }) {
 
   const openEdit = (appt) => {
     setEditing(appt)
-    const start = new Date(appt.start_time)
-    const end = new Date(appt.end_time)
+    const start = new Date(appt.appointment_time)
+    const end = new Date(start.getTime() + 60 * 60 * 1000) // default 1h (no end_time in DB)
     setForm({
       client_name: appt.client_name || '',
       service: appt.service || '',
-      staff_id: appt.staff_id || '',
+      staff_member: appt.staff_member || '',
       date: toDateInput(start),
       start: hhmm(start),
       end: hhmm(end),
@@ -173,9 +173,9 @@ export default function Schedule({ clientId }) {
       const payload = {
         client_name: form.client_name.trim(),
         service: form.service || null,
-        staff_id: form.staff_id || null,
-        start_time: startISO,
-        end_time: endISO,
+        staff_member: form.staff_member || null,
+        appointment_time: startISO,
+        // end_time not in DB schema
         status: form.status,
         notes: form.notes || null,
       }
@@ -228,15 +228,15 @@ export default function Schedule({ clientId }) {
 
   // Drag to reschedule (week/day): move appointment to a new slot.
   const reschedule = async (appt, newDate, newStartMinutes) => {
-    const dur = durationMinutes(appt.start_time, appt.end_time) || 60
+    const dur = 60
     const start = new Date(newDate)
     start.setHours(0, 0, 0, 0)
     start.setMinutes(newStartMinutes)
     const end = new Date(start.getTime() + dur * 60000)
     try {
       await updateAppointment(appt.id, {
-        start_time: start.toISOString(),
-        end_time: end.toISOString(),
+        appointment_time: start.toISOString(),
+        // end_time not in DB schema
       })
       toast.success('Appointment rescheduled')
     } catch {
@@ -353,11 +353,10 @@ export default function Schedule({ clientId }) {
           />
           <FormField
             label="Staff Member"
-            type="select"
-            name="staff_id"
-            value={form.staff_id}
-            onChange={setField('staff_id')}
-            options={staffOptions}
+            name="staff_member"
+            value={form.staff_member}
+            onChange={setField('staff_member')}
+            placeholder="Staff name"
           />
           <FormField
             label="Date"
@@ -477,7 +476,7 @@ function MonthView({ cursor, appointments, onCellClick, onApptClick }) {
   const today = new Date()
 
   const apptsForDay = (day) =>
-    appointments.filter((a) => isSameDay(a.start_time, day))
+    appointments.filter((a) => isSameDay(a.appointment_time, day))
 
   return (
     <div className="month-grid">
@@ -514,7 +513,7 @@ function MonthView({ cursor, appointments, onCellClick, onApptClick }) {
                   onApptClick(a)
                 }}
               >
-                {formatTime(a.start_time)} {a.client_name}
+                {formatTime(a.appointment_time)} {a.client_name}
               </div>
             ))}
             {dayAppts.length > 3 && (
@@ -560,13 +559,13 @@ function TimeGridView({
   }
 
   const apptsForDay = (day) =>
-    appointments.filter((a) => isSameDay(a.start_time, day))
+    appointments.filter((a) => isSameDay(a.appointment_time, day))
 
   const eventGeom = (a) => {
-    const s = new Date(a.start_time)
+    const s = new Date(a.appointment_time)
     const startMin =
       (s.getHours() - DAY_START_HOUR) * 60 + s.getMinutes()
-    const dur = durationMinutes(a.start_time, a.end_time) || 30
+    const dur = 60
     const top = (startMin / 60) * HOUR_PX
     const height = Math.max(22, (dur / 60) * HOUR_PX - 3)
     return { top, height }
@@ -669,7 +668,7 @@ function TimeGridView({
                   >
                     <div className="te-title">{a.client_name}</div>
                     <div className="te-sub">
-                      {formatTime(a.start_time)}
+                      {formatTime(a.appointment_time)}
                       {a.service ? ` · ${a.service}` : ''}
                     </div>
                   </div>
@@ -690,7 +689,7 @@ function TimeGridView({
 // ── Appointment detail panel ──────────────────────────────────────
 function ApptDetail({ appt, onClose, onEdit, onDelete, onCancel }) {
   const staff = appt.team_members
-  const dur = durationMinutes(appt.start_time, appt.end_time)
+  const dur = 60
   return (
     <>
       <div className="panel-backdrop" onClick={onClose} />
@@ -739,12 +738,12 @@ function ApptDetail({ appt, onClose, onEdit, onDelete, onCancel }) {
             </div>
             <div className="info-item">
               <div className="k">Date</div>
-              <div className="v">{formatDate(appt.start_time)}</div>
+              <div className="v">{formatDate(appt.appointment_time)}</div>
             </div>
             <div className="info-item">
               <div className="k">Time</div>
               <div className="v">
-                {formatTime(appt.start_time)} – {formatTime(appt.end_time)}
+                {formatTime(appt.appointment_time)}
               </div>
             </div>
             <div className="info-item">

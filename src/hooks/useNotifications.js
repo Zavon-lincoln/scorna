@@ -1,7 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 
-/** Notifications for a client, with read management. */
+/**
+ * Notifications for a client.
+ * Gracefully handles the case where the notifications table does not yet exist.
+ */
 export function useNotifications(clientId) {
   const [notifications, setNotifications] = useState([])
   const [loading, setLoading] = useState(true)
@@ -21,7 +24,14 @@ export function useNotifications(clientId) {
         .select('*')
         .eq('client_id', clientId)
         .order('created_at', { ascending: false })
-      if (err) throw err
+      // If the table doesn't exist yet, treat it as empty rather than an error.
+      if (err) {
+        if (err.message && (err.message.includes('does not exist') || err.message.includes('schema cache'))) {
+          setNotifications([])
+          return
+        }
+        throw err
+      }
       setNotifications(data || [])
     } catch (err) {
       console.error('useNotifications fetch:', err)
@@ -35,21 +45,22 @@ export function useNotifications(clientId) {
     fetchNotifications()
   }, [fetchNotifications])
 
-  /** Optimistic mark-read for a single notification. */
   const markRead = useCallback(
     async (id) => {
       const prev = notifications
       setNotifications((cur) =>
         cur.map((n) => (n.id === id ? { ...n, read: true } : n))
       )
-      const { error: err } = await supabase
-        .from('notifications')
-        .update({ read: true })
-        .eq('id', id)
-      if (err) {
-        console.error('markRead failed, reverting:', err)
-        setNotifications(prev) // revert
-        throw err
+      try {
+        const { error: err } = await supabase
+          .from('notifications')
+          .update({ read: true })
+          .eq('id', id)
+        if (err) {
+          setNotifications(prev)
+        }
+      } catch {
+        setNotifications(prev)
       }
     },
     [notifications]
@@ -59,15 +70,15 @@ export function useNotifications(clientId) {
     if (!clientId) return
     const prev = notifications
     setNotifications((cur) => cur.map((n) => ({ ...n, read: true })))
-    const { error: err } = await supabase
-      .from('notifications')
-      .update({ read: true })
-      .eq('client_id', clientId)
-      .eq('read', false)
-    if (err) {
-      console.error('markAllRead failed, reverting:', err)
+    try {
+      const { error: err } = await supabase
+        .from('notifications')
+        .update({ read: true })
+        .eq('client_id', clientId)
+        .eq('read', false)
+      if (err) setNotifications(prev)
+    } catch {
       setNotifications(prev)
-      throw err
     }
   }, [clientId, notifications])
 

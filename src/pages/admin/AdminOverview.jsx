@@ -50,9 +50,9 @@ export default function AdminOverview() {
           .select('id, client_id, status, created_at'),
         supabaseAdmin
           .from('appointments')
-          .select('id, client_id, start_time, status')
-          .gte('start_time', dayStart)
-          .lte('start_time', dayEnd)
+          .select('id, client_id, appointment_time, status')
+          .gte('appointment_time', dayStart)
+          .lte('appointment_time', dayEnd)
           .neq('status', 'cancelled'),
         supabaseAdmin
           .from('notifications')
@@ -62,11 +62,7 @@ export default function AdminOverview() {
           .from('content_schedule')
           .select('client_id, status')
           .eq('week_start', weekStr),
-        supabaseAdmin
-          .from('lead_activity')
-          .select('*, leads(name)')
-          .order('created_at', { ascending: false })
-          .limit(20),
+        Promise.resolve({ data: [], error: null }), // lead_activity table not yet in DB
       ])
 
       const firstErr = [
@@ -157,11 +153,11 @@ export default function AdminOverview() {
           .limit(5),
         supabaseAdmin
           .from('appointments')
-          .select('id, client_name, start_time, status')
+          .select('id, client_name, appointment_time, status')
           .eq('client_id', clientId)
-          .gte('start_time', dayStart)
-          .lte('start_time', dayEnd)
-          .order('start_time'),
+          .gte('appointment_time', dayStart)
+          .lte('appointment_time', dayEnd)
+          .order('appointment_time'),
       ])
       setExpandData((prev) => ({
         ...prev,
@@ -175,6 +171,7 @@ export default function AdminOverview() {
 
   if (loading) return <LoadingState lines={8} />
   if (error) return <ErrorState error={error} onRetry={load} />
+  if (!data) return null
 
   const stats = [
     { label: 'Active Clients', value: data.totalClients, icon: Building2 },
@@ -341,7 +338,7 @@ function FragmentRow({ c, expanded, onToggle, detail }) {
                     >
                       <span style={{ fontSize: 13 }}>{a.client_name}</span>
                       <span className="muted" style={{ fontSize: 12 }}>
-                        {formatTime(a.start_time)}
+                        {formatTime(a.appointment_time)}
                       </span>
                     </div>
                   ))

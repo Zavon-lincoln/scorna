@@ -1,7 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 
-/** Appointments for a client, with CRUD + recurrence generation. */
+/**
+ * Appointments for a client.
+ * DB column: appointment_time (not start_time), no end_time, staff_member (text, not staff_id FK).
+ */
 export function useAppointments(clientId) {
   const [appointments, setAppointments] = useState([])
   const [loading, setLoading] = useState(true)
@@ -18,9 +21,9 @@ export function useAppointments(clientId) {
     try {
       const { data, error: err } = await supabase
         .from('appointments')
-        .select('*, team_members(id, full_name, initials, color)')
+        .select('*')
         .eq('client_id', clientId)
-        .order('start_time', { ascending: true })
+        .order('appointment_time', { ascending: true })
       if (err) throw err
       setAppointments(data || [])
     } catch (err) {
@@ -35,41 +38,27 @@ export function useAppointments(clientId) {
     fetchAppointments()
   }, [fetchAppointments])
 
-  /**
-   * Create one appointment, or a series when recurring.
-   * `recurrence` = { frequency: 'Daily'|'Weekly'|'Monthly', end: 'YYYY-MM-DD' }.
-   */
   const createAppointment = useCallback(
     async (payload, recurrence) => {
       const rows = []
-      const baseStart = new Date(payload.start_time)
-      const baseEnd = new Date(payload.end_time)
+      const baseTime = new Date(payload.appointment_time)
 
       if (recurrence?.frequency && recurrence?.end) {
         const endDate = new Date(recurrence.end + 'T23:59:59')
-        let cursorStart = new Date(baseStart)
-        let cursorEnd = new Date(baseEnd)
+        let cursor = new Date(baseTime)
         let guard = 0
-        while (cursorStart <= endDate && guard < 366) {
+        while (cursor <= endDate && guard < 366) {
           rows.push({
             ...payload,
             client_id: clientId,
-            start_time: cursorStart.toISOString(),
-            end_time: cursorEnd.toISOString(),
-            is_recurring: true,
-            recurrence_rule: recurrence.frequency,
-            recurrence_end: recurrence.end,
+            appointment_time: cursor.toISOString(),
           })
-          // Advance.
           if (recurrence.frequency === 'Daily') {
-            cursorStart = addTime(cursorStart, { days: 1 })
-            cursorEnd = addTime(cursorEnd, { days: 1 })
+            cursor = addTime(cursor, { days: 1 })
           } else if (recurrence.frequency === 'Weekly') {
-            cursorStart = addTime(cursorStart, { days: 7 })
-            cursorEnd = addTime(cursorEnd, { days: 7 })
+            cursor = addTime(cursor, { days: 7 })
           } else {
-            cursorStart = addTime(cursorStart, { months: 1 })
-            cursorEnd = addTime(cursorEnd, { months: 1 })
+            cursor = addTime(cursor, { months: 1 })
           }
           guard++
         }
@@ -80,11 +69,11 @@ export function useAppointments(clientId) {
       const { data, error: err } = await supabase
         .from('appointments')
         .insert(rows)
-        .select('*, team_members(id, full_name, initials, color)')
+        .select('*')
       if (err) throw err
       setAppointments((prev) =>
         [...prev, ...(data || [])].sort(
-          (a, b) => new Date(a.start_time) - new Date(b.start_time)
+          (a, b) => new Date(a.appointment_time) - new Date(b.appointment_time)
         )
       )
       return data
@@ -97,13 +86,13 @@ export function useAppointments(clientId) {
       .from('appointments')
       .update(patch)
       .eq('id', id)
-      .select('*, team_members(id, full_name, initials, color)')
+      .select('*')
       .single()
     if (err) throw err
     setAppointments((prev) =>
       prev
         .map((a) => (a.id === id ? data : a))
-        .sort((x, y) => new Date(x.start_time) - new Date(y.start_time))
+        .sort((x, y) => new Date(x.appointment_time) - new Date(y.appointment_time))
     )
     return data
   }, [])
@@ -128,7 +117,6 @@ export function useAppointments(clientId) {
   }
 }
 
-// Local helper that preserves wall-clock time across day/month shifts.
 function addTime(date, { days = 0, months = 0 }) {
   const d = new Date(date)
   if (days) d.setDate(d.getDate() + days)

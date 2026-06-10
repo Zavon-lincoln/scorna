@@ -52,8 +52,8 @@ export default function Overview({ clientId, onOpenLead, onNavigate }) {
           .from('appointments')
           .select('id', { count: 'exact', head: true })
           .eq('client_id', clientId)
-          .gte('start_time', dayStart)
-          .lte('start_time', dayEnd),
+          .gte('appointment_time', dayStart)
+          .lte('appointment_time', dayEnd),
         supabase.from('reviews').select('rating').eq('client_id', clientId),
         supabase
           .from('content_schedule')
@@ -68,12 +68,12 @@ export default function Overview({ clientId, onOpenLead, onNavigate }) {
           .limit(5),
         supabase
           .from('appointments')
-          .select('*, team_members(full_name, color)')
+          .select('*')
           .eq('client_id', clientId)
-          .gte('start_time', dayStart)
-          .lte('start_time', dayEnd)
+          .gte('appointment_time', dayStart)
+          .lte('appointment_time', dayEnd)
           .neq('status', 'cancelled')
-          .order('start_time', { ascending: true }),
+          .order('appointment_time', { ascending: true }),
       ])
 
       // Surface the first error encountered.
@@ -276,7 +276,7 @@ export default function Overview({ clientId, onOpenLead, onNavigate }) {
             <div>
               {data.schedule.map((appt) => (
                 <div key={appt.id} className="timeline-row">
-                  <span className="time">{formatTime(appt.start_time)}</span>
+                  <span className="time">{formatTime(appt.appointment_time)}</span>
                   <div className="grow">
                     <div className="name">{appt.client_name}</div>
                     <div className="meta">{appt.service || '—'}</div>

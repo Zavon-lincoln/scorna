@@ -22,7 +22,7 @@ export function useLeads(clientId) {
     try {
       const { data, error: err } = await supabase
         .from('leads')
-        .select('*, team_members(id, full_name, initials, color)')
+        .select('*')
         .eq('client_id', clientId)
         .order('created_at', { ascending: false })
       if (err) throw err
@@ -45,7 +45,7 @@ export function useLeads(clientId) {
       const { data, error: err } = await supabase
         .from('leads')
         .insert({ ...payload, client_id: clientId })
-        .select('*, team_members(id, full_name, initials, color)')
+        .select('*')
         .single()
       if (err) throw err
 
@@ -69,7 +69,7 @@ export function useLeads(clientId) {
       .from('leads')
       .update(patch)
       .eq('id', id)
-      .select('*, team_members(id, full_name, initials, color)')
+      .select('*')
       .single()
     if (err) throw err
     setLeads((prev) => prev.map((l) => (l.id === id ? data : l)))
@@ -88,7 +88,7 @@ export function useLeads(clientId) {
         .from('leads')
         .update({ status: toStatus })
         .eq('id', lead.id)
-        .select('*, team_members(id, full_name, initials, color)')
+        .select('*')
         .single()
       if (err) throw err
 
@@ -148,7 +148,14 @@ export function useLeadActivity(leadId, clientId) {
         .select('*')
         .eq('lead_id', leadId)
         .order('created_at', { ascending: false })
-      if (err) throw err
+      if (err) {
+        // Table may not exist yet — treat as empty rather than crashing.
+        if (err.message && (err.message.includes('does not exist') || err.message.includes('schema cache'))) {
+          setActivity([])
+          return
+        }
+        throw err
+      }
       setActivity(data || [])
     } catch (err) {
       console.error('useLeadActivity fetch:', err)
@@ -164,6 +171,7 @@ export function useLeadActivity(leadId, clientId) {
 
   const addNote = useCallback(
     async (content, createdBy) => {
+      // lead_activity table may not exist yet
       const { data, error: err } = await supabase
         .from('lead_activity')
         .insert({

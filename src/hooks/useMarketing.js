@@ -114,16 +114,11 @@ export function useReviews(clientId) {
     [clientId]
   )
 
+  // 'responded' column does not exist in the DB yet — local-only optimistic toggle.
   const toggleResponded = useCallback(async (id, responded) => {
-    const { data, error: err } = await supabase
-      .from('reviews')
-      .update({ responded })
-      .eq('id', id)
-      .select('*')
-      .single()
-    if (err) throw err
-    setReviews((prev) => prev.map((r) => (r.id === id ? data : r)))
-    return data
+    setReviews((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, responded } : r))
+    )
   }, [])
 
   const avgRating =
