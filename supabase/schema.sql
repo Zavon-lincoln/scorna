@@ -223,3 +223,35 @@ do $$ declare t text; begin
     execute format('create policy "client_own" on %I for all using (client_id = get_my_client_id())', t);
   end loop;
 end $$;
+
+-- ───────────────────────────────────────────────────────────────────
+-- Public lead capture (marketing site contact form).
+-- Unauthenticated visitors can INSERT a booking request; only admins
+-- can read/manage them. No client_id — these are inbound prospects for
+-- Scorna itself, triaged into clients/leads after a discovery call.
+-- ───────────────────────────────────────────────────────────────────
+create table if not exists bookings (
+  id                uuid primary key default gen_random_uuid(),
+  full_name         text not null,
+  business_name     text,
+  business_type     text,
+  email             text not null,
+  phone             text,
+  marketing_spend   text,
+  biggest_challenge text,
+  preferred_time    text,
+  status            text default 'New',
+  notes             text default '',
+  created_at        timestamptz default now()
+);
+
+alter table bookings enable row level security;
+
+-- Anyone (anon role) may submit a request…
+create policy "public_insert" on bookings
+  for insert to anon, authenticated with check (true);
+-- …but only admins may read or manage them.
+create policy "admin_read" on bookings
+  for select using (get_my_role() = 'admin');
+create policy "admin_manage" on bookings
+  for all using (get_my_role() = 'admin');

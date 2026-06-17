@@ -16,7 +16,9 @@ import './styles/forms.css'
 import './styles/pills.css'
 import './styles/zones.css'
 import './styles/public.css'
+import './styles/blueprint.css'
 import './styles/pages.css'
+import './styles/dashboard.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

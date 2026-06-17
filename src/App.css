@@ -1,5 +1,0 @@
-/* App-level overrides. Most styling lives in styles/pages.css. */
-
-#root {
-  isolation: isolate;
-}

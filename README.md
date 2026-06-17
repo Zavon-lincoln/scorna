@@ -1,23 +1,48 @@
-# Scorna Client Dashboard
+# Scorna
 
-A production client dashboard for **Scorna**, an AI marketing & systems agency.
-Built with React 18 + Vite + Supabase. Two roles:
+A single, unified **React + Vite + Supabase** app for **Scorna**, an AI
+marketing & systems agency. Three zones share one brand, one backend, and one
+seamless navigation model:
 
-- **Clients** — local service business owners managing leads, schedule, team,
-  content, marketing, and notifications.
-- **Admins** — Scorna staff with a God-mode view across all clients.
+- **Public website** (`/`) — marketing site + free-audit capture. Anonymous
+  visitors submit a request that lands in the dashboard.
+- **Client dashboard** (`/dashboard`) — authenticated portal for leads,
+  schedule, team, content, marketing, and notifications. Admins get a God-mode
+  view across all clients.
+- **Blueprint generator** (`/blueprint`) — internal, admin-only tool for
+  building audit blueprints (live cost calculator + PDF export).
 
-Design system: **Smoke & Glass** — dark luxury neubrutalism.
+Design system: **Glassmorphic** — layered frosted surfaces, deep blur, and
+ambient ember light on a deep void. No grid background.
 
 ---
 
 ## Stack
 
 - React 18 + Vite
+- React Router v6 (zone routing + guards)
 - Supabase (auth, Postgres, RLS)
 - Lucide React (icons)
+- jsPDF + html2canvas (blueprint PDF export, lazy-loaded)
 - Plain CSS (no frameworks)
 - Deploys cleanly to Vercel
+
+---
+
+## Zones & Routing
+
+| Route          | Zone       | Access                         |
+| -------------- | ---------- | ------------------------------ |
+| `/`            | Public     | Always open                    |
+| `/login`       | Auth gate  | Open (redirects in if signed in) |
+| `/dashboard/*` | Client     | Requires session (client/admin) |
+| `/blueprint/*` | Internal   | Admin only                     |
+| `/components`  | Internal   | Admin only (unlinked)          |
+
+`ProtectedRoute` / `AdminRoute` guards live in
+`src/components/routing/RouteGuards.jsx`. Admins see a persistent **ZoneNav**
+for instant switching between Dashboard and Blueprint. Blueprint drafts persist
+to `localStorage` only — they are never written to the database.
 
 ---
 
@@ -124,17 +149,24 @@ The Edge Function verifies the caller is an admin before performing any action.
 src/
 ├── lib/            supabase client + utilities
 ├── hooks/          data hooks (auth, leads, appointments, …)
+├── context/        AuthContext (wraps useAuth for router-mounted routes)
 ├── components/
-│   ├── layout/     Sidebar, Topbar
-│   ├── ui/         Modal, FormField, Toast, states, ConfirmDialog
+│   ├── layout/     AppShell, ZoneNav, Sidebar, Topbar
+│   ├── routing/    RouteGuards (ProtectedRoute, AdminRoute)
+│   ├── ui/         Modal, FormField, Toast, states, ConfirmDialog, FullPageLoader
 │   └── shared/     Avatar
+├── zones/
+│   ├── public/     PublicLayout, Home, ContactForm, Components
+│   ├── dashboard/  DashboardLayout + pageRoutes (wrap the pages below)
+│   └── blueprint/  BlueprintLayout + builder/ + document/ + lib/
 ├── pages/          Login, Overview, Leads, Schedule, Team, Content,
 │                   Marketing, Notifications, admin/*
-├── styles/         design-tokens, globals, pages
-├── App.jsx         auth gate + navigation shell
-└── main.jsx
+├── styles/         tokens, globals, typography, glass, buttons, forms, pills,
+│                   zones, public, blueprint, pages, dashboard
+├── App.jsx         router + zone wiring
+└── main.jsx        providers (Router, Auth, Toast) + style imports
 supabase/
-├── schema.sql      full database schema + RLS
+├── schema.sql      full database schema + RLS (incl. public `bookings` table)
 └── functions/admin-users/index.ts   (Edge Function placeholder)
 ```
 
@@ -142,7 +174,11 @@ supabase/
 
 ## Notes
 
-- Navigation is state-based (no React Router) per the brief.
+- Routing is React Router v6; zones fade between each other with no full reload.
+- The public free-audit form inserts into the `bookings` table (anonymous
+  insert allowed by RLS; admin-only read). Triage inbound prospects from there.
+- Blueprint drafts live in React state + `localStorage`; PDF export captures the
+  rendered document at 2x via html2canvas + jsPDF.
 - Every list/table/board has loading, empty, and error states.
 - All deletes require confirmation; all mutations show toasts.
 - The calendar (month/week/day, drag-to-reschedule) is built from scratch.

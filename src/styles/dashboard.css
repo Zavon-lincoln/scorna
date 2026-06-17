@@ -1,0 +1,59 @@
+/* ───────────────────────────────────────────────────────────────────
+   Dashboard glass alignment.
+   Surgical overrides applied AFTER pages.css to migrate the dashboard's
+   key surfaces onto the glass system without rewriting its layout. Cards,
+   modals and pills already inherit the glass look via the `.glass` alias
+   + remapped tokens; this file handles the surfaces that still carried
+   solid backgrounds or the old solid accent bar.
+   ─────────────────────────────────────────────────────────────────── */
+
+/* Sidebar — translucent so the ambient ember glow reads through it
+   (spec: sidebar shows faint ember glow behind the glass). */
+.sidebar {
+  background: var(--glass-1);
+  backdrop-filter: var(--blur-md);
+  -webkit-backdrop-filter: var(--blur-md);
+  border-right: 1px solid var(--border-1);
+}
+
+/* Topbar — glass-base, sits above scrolling content. */
+.topbar {
+  background: var(--glass-1);
+  backdrop-filter: var(--blur-md);
+  -webkit-backdrop-filter: var(--blur-md);
+  border-bottom: 1px solid var(--border-1);
+}
+
+/* Stat cards — replace the solid ember accent bar with a thin ember
+   gradient at the top edge (spec). */
+.stat-card .accent-bar {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--ember-glow),
+    transparent
+  );
+  opacity: 0.9;
+}
+
+/* Modals — elevate to the prominent glass tier. */
+.modal {
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  animation: modal-scale-in 200ms ease both;
+}
+
+/* Lead detail slide-in panel — elevated glass + soft shadow. */
+.panel {
+  box-shadow: -8px 0 40px rgba(0, 0, 0, 0.45);
+}
+
+/* Kanban: dragging state gets an ember border glow (spec). */
+.lead-card.dragging,
+.lead-card[draggable='true']:active {
+  border-color: var(--border-ember);
+  box-shadow: 0 0 0 1px rgba(123, 13, 13, 0.35),
+    0 8px 24px rgba(0, 0, 0, 0.4);
+}

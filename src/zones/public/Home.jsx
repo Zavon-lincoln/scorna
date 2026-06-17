@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import {
   ArrowRight,
   PhoneOff,
@@ -10,6 +9,7 @@ import {
   BarChart3,
   Sparkles,
 } from 'lucide-react'
+import ContactForm from './ContactForm'
 
 /**
  * Scorna marketing homepage. Single scrolling page on the glass system.
@@ -124,10 +124,7 @@ export default function Home() {
             We&rsquo;ll map exactly where your business is leaking revenue and
             what it would take to fix it — no cost, no obligation.
           </p>
-          <Link to="/login" className="btn btn-primary">
-            Get my free audit <ArrowRight size={14} />
-          </Link>
-          <p className="text-meta">Contact form wiring lands in the next phase.</p>
+          <ContactForm />
         </div>
       </section>
     </div>
