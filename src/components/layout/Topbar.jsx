@@ -1,28 +1,36 @@
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Bell, Settings, LogOut } from 'lucide-react'
 
-const TITLES = {
-  overview: 'Overview',
-  leads: 'Leads',
-  schedule: 'Schedule',
-  team: 'Team',
-  content: 'Content',
-  marketing: 'Marketing',
-  notifications: 'Notifications',
-  admin: 'Admin',
+const TITLES = [
+  { match: /^\/dashboard\/leads/, title: 'Leads' },
+  { match: /^\/dashboard\/schedule/, title: 'Schedule' },
+  { match: /^\/dashboard\/team/, title: 'Team' },
+  { match: /^\/dashboard\/content/, title: 'Content' },
+  { match: /^\/dashboard\/marketing/, title: 'Marketing' },
+  { match: /^\/dashboard\/notifications/, title: 'Notifications' },
+  { match: /^\/dashboard\/admin/, title: 'Admin' },
+  { match: /^\/dashboard\/?$/, title: 'Overview' },
+]
+
+function titleFor(pathname) {
+  return TITLES.find((t) => t.match.test(pathname))?.title || 'Dashboard'
 }
 
 /**
- * Top bar with page title and global actions.
- * Props: page, unreadCount, onBell, onSignOut.
+ * Dashboard top bar with page title and global actions.
+ * Props: unreadCount, onSignOut.
  */
-export default function Topbar({ page, unreadCount = 0, onBell, onSignOut }) {
+export default function Topbar({ unreadCount = 0, onSignOut }) {
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
+
   return (
-    <header className="topbar">
-      <h2>{TITLES[page] || 'Dashboard'}</h2>
+    <header className="topbar glass-base">
+      <h2>{titleFor(pathname)}</h2>
       <div className="topbar-actions">
         <button
           className="icon-btn"
-          onClick={onBell}
+          onClick={() => navigate('/dashboard/notifications')}
           aria-label="Notifications"
           title="Notifications"
         >

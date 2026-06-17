@@ -1,0 +1,185 @@
+/* ───────────────────────────────────────────────────────────────────
+   Glass system + background atmosphere.
+   No grid background anywhere — the app sits on a deep void with three
+   ambient light sources for depth.
+   ─────────────────────────────────────────────────────────────────── */
+
+/* ── Background ──────────────────────────────────────────────────── */
+
+.app-bg {
+  min-height: 100vh;
+  background: var(--void);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Ambient light sources — fixed, behind everything, non-interactive */
+.app-bg::before {
+  content: '';
+  position: fixed;
+  top: -20%;
+  left: -10%;
+  width: 60vw;
+  height: 60vh;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(123, 13, 13, 0.12) 0%,
+    rgba(123, 13, 13, 0.04) 40%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app-bg::after {
+  content: '';
+  position: fixed;
+  bottom: -20%;
+  right: -10%;
+  width: 60vw;
+  height: 60vh;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(123, 13, 13, 0.09) 0%,
+    rgba(123, 13, 13, 0.03) 40%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Optional neutral center lift — opt in with .app-bg-neutral */
+.app-bg-neutral::before {
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    rgba(240, 237, 230, 0.025) 0%,
+    transparent 60%
+  );
+}
+
+/* Everything that isn't an ambient light sits above the glows */
+.app-bg > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Tier 1 — Base surface. Page sections, sidebar, large panels ─── */
+.glass-base {
+  background: var(--glass-1);
+  backdrop-filter: var(--blur-md);
+  -webkit-backdrop-filter: var(--blur-md);
+  border: 1px solid var(--border-0);
+  border-radius: var(--radius-md);
+}
+
+/* ── Tier 2 — Standard card. Default for most UI cards ───────────── */
+.glass-card {
+  background: var(--glass-2);
+  backdrop-filter: var(--blur-md);
+  -webkit-backdrop-filter: var(--blur-md);
+  border: 1px solid var(--border-1);
+  border-radius: var(--radius-md);
+  position: relative;
+}
+
+/* Highlight shimmer — applied to glass-card only */
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 8%;
+  right: 8%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.12),
+    transparent
+  );
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  pointer-events: none;
+}
+
+/* ── Tier 3 — Elevated surface. Modals, active panels ───────────── */
+.glass-elevated {
+  background: var(--glass-3);
+  backdrop-filter: var(--blur-lg);
+  -webkit-backdrop-filter: var(--blur-lg);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-lg);
+  position: relative;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* ── Modal overlay ──────────────────────────────────────────────── */
+.glass-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: var(--blur-sm);
+  -webkit-backdrop-filter: var(--blur-sm);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Interactive card ───────────────────────────────────────────── */
+.glass-card-interactive {
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
+  cursor: pointer;
+}
+.glass-card-interactive:hover {
+  background: var(--glass-3);
+  border-color: var(--border-2);
+  transform: translateY(-1px);
+}
+.glass-card-interactive:active {
+  transform: scale(0.985);
+}
+
+/* ── Ember accent variant ───────────────────────────────────────── */
+.glass-ember {
+  border-left: 2px solid var(--ember);
+  background: linear-gradient(
+    90deg,
+    rgba(123, 13, 13, 0.08) 0%,
+    var(--glass-1) 40%
+  );
+}
+
+/* ───────────────────────────────────────────────────────────────
+   Legacy alias — Modal.jsx and pages.css still use `.glass`.
+   Map it to the standard card so existing modals keep their look
+   until they are migrated to .glass-elevated.
+   ─────────────────────────────────────────────────────────────── */
+.glass {
+  background: var(--glass-2);
+  backdrop-filter: var(--blur-md);
+  -webkit-backdrop-filter: var(--blur-md);
+  border: 1px solid var(--border-1);
+  border-radius: var(--radius-md);
+  position: relative;
+}
+.glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 8%;
+  right: 8%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.12),
+    transparent
+  );
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  pointer-events: none;
+}

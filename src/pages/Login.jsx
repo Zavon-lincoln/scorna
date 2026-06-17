@@ -32,11 +32,8 @@ export default function Login() {
   }
 
   return (
-    <div className="grid-surface login-screen">
-      <div className="ember-orb-tl" />
-      <div className="ember-orb-br" />
-
-      <div className="glass login-card">
+    <div className="login-screen zone-fade">
+      <div className="glass-elevated login-card">
         <div className="wordmark">
           <em>S</em>CORNA
         </div>

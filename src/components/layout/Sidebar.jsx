@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom'
 import {
   LayoutGrid,
   Users,
@@ -12,22 +13,20 @@ import {
 } from 'lucide-react'
 
 const NAV_ITEMS = [
-  { key: 'overview', label: 'Overview', icon: LayoutGrid },
-  { key: 'leads', label: 'Leads', icon: Users },
-  { key: 'schedule', label: 'Schedule', icon: Calendar },
-  { key: 'team', label: 'Team', icon: UserCircle },
-  { key: 'content', label: 'Content', icon: FileEdit },
-  { key: 'marketing', label: 'Marketing', icon: BarChart2 },
-  { key: 'notifications', label: 'Notifications', icon: Bell, badge: true },
+  { to: '/dashboard', label: 'Overview', icon: LayoutGrid, end: true },
+  { to: '/dashboard/leads', label: 'Leads', icon: Users },
+  { to: '/dashboard/schedule', label: 'Schedule', icon: Calendar },
+  { to: '/dashboard/team', label: 'Team', icon: UserCircle },
+  { to: '/dashboard/content', label: 'Content', icon: FileEdit },
+  { to: '/dashboard/marketing', label: 'Marketing', icon: BarChart2 },
+  { to: '/dashboard/notifications', label: 'Notifications', icon: Bell, badge: true },
 ]
 
 /**
- * Left navigation rail.
- * Props: page, onNavigate, role, clientName, unreadCount, collapsed, onToggle.
+ * Dashboard left navigation rail (router-driven).
+ * Props: role, clientName, unreadCount, collapsed, onToggle.
  */
 export default function Sidebar({
-  page,
-  onNavigate,
   role,
   clientName,
   unreadCount = 0,
@@ -37,7 +36,7 @@ export default function Sidebar({
   const isAdmin = role === 'admin'
 
   return (
-    <aside className={`sidebar${collapsed ? ' collapsed' : ''}`}>
+    <aside className={`sidebar glass-base${collapsed ? ' collapsed' : ''}`}>
       <div className="sidebar-brand">
         <div className="wordmark">
           <em>S</em>CORNA
@@ -55,14 +54,13 @@ export default function Sidebar({
       <nav className="sidebar-nav">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon
-          const active = page === item.key
           return (
-            <button
-              key={item.key}
-              className={`nav-item${active ? ' active' : ''}`}
-              onClick={() => onNavigate(item.key)}
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.end}
+              className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
               title={collapsed ? item.label : undefined}
-              aria-current={active ? 'page' : undefined}
             >
               <Icon size={18} />
               <span className="nav-label">{item.label}</span>
@@ -71,19 +69,19 @@ export default function Sidebar({
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </span>
               )}
-            </button>
+            </NavLink>
           )
         })}
 
         {isAdmin && (
-          <button
-            className={`nav-item${page === 'admin' ? ' active' : ''}`}
-            onClick={() => onNavigate('admin')}
+          <NavLink
+            to="/dashboard/admin"
+            className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
             title={collapsed ? 'Admin' : undefined}
           >
             <Shield size={18} />
             <span className="nav-label">Admin</span>
-          </button>
+          </NavLink>
         )}
       </nav>
 

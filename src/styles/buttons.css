@@ -1,0 +1,107 @@
+/* ───────────────────────────────────────────────────────────────────
+   Button system.
+   `.btn` alone renders as the ghost/default button so existing markup
+   that uses a bare `.btn` keeps working; `.btn-default` is the explicit
+   form from the spec.
+   ─────────────────────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-ui);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: 1px solid var(--border-1);
+  background: transparent;
+  color: var(--bone);
+  text-decoration: none;
+  white-space: nowrap;
+  min-height: 36px;
+}
+
+/* Default — ghost */
+.btn-default,
+.btn:not(.btn-primary):not(.btn-danger):not(.btn-icon) {
+  background: transparent;
+  border-color: var(--border-1);
+  color: var(--bone);
+}
+.btn-default:hover,
+.btn:not(.btn-primary):not(.btn-danger):not(.btn-icon):hover {
+  background: var(--glass-2);
+  border-color: var(--border-2);
+}
+
+/* Primary — ember fill */
+.btn-primary {
+  background: rgba(123, 13, 13, 0.25);
+  border-color: var(--border-ember);
+  color: var(--bone);
+}
+.btn-primary:hover {
+  background: rgba(123, 13, 13, 0.38);
+  border-color: rgba(123, 13, 13, 0.85);
+}
+
+/* Danger */
+.btn-danger {
+  background: transparent;
+  border-color: rgba(180, 60, 60, 0.3);
+  color: #cc5555;
+}
+.btn-danger:hover {
+  background: rgba(180, 60, 60, 0.08);
+  border-color: rgba(180, 60, 60, 0.6);
+}
+
+/* Icon button */
+.btn-icon,
+.icon-btn {
+  padding: 8px;
+  width: 36px;
+  height: 36px;
+  justify-content: center;
+  background: var(--glass-1);
+  border: 1px solid var(--border-0);
+  border-radius: var(--radius-sm);
+  color: var(--ash);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: all var(--transition-fast);
+}
+.btn-icon:hover,
+.icon-btn:hover {
+  background: var(--glass-2);
+  border-color: var(--border-1);
+  color: var(--bone);
+}
+
+/* Small variant (legacy) */
+.btn-sm {
+  padding: 6px 12px;
+  min-height: 0;
+  font-size: 0.625rem;
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+.btn:disabled,
+.icon-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+.btn:focus-visible,
+.icon-btn:focus-visible {
+  outline: 2px solid var(--ember);
+  outline-offset: 2px;
+}
